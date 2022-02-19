@@ -1,10 +1,9 @@
-import axios from 'axios';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import Modal from 'react-modal';
 import closeImg from '../../assets/close.svg';
 import incomeImg from '../../assets/income.svg';
 import outcomeImg from '../../assets/outcome.svg';
-import { api } from '../../services/api';
+import { TransactionsContext } from '../../TransactionsContext';
 import { Form, TransactionCategoryContainer, RadioBox } from './styles';
 
 interface NewTransactionModalProps {
@@ -14,30 +13,30 @@ interface NewTransactionModalProps {
 
 export function NewTransactionModal({isModalOpen, handleCloseModal}: NewTransactionModalProps) {
   const [transactionType, setTransactionType] = useState('deposit');
+  const { createTransaction } = useContext(TransactionsContext);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState('');
 
-
-  function handleFormSubmit(event: FormEvent) {
+  async function handleFormSubmit(event: FormEvent) {
     event.preventDefault();
 
-    const data = {
-      title: title,
-      amount: amount,
-      category: category,
-      transactionType: transactionType
-    };
+    await createTransaction({
+      title,
+      amount,
+      category,
+      transactionType
+    });
 
-    api.post('transactions', data)
-      .then((response) => {
-        if (response.status === 201) {
-          handleCloseModal();
-          setTitle('');
-          setAmount(0);
-          setCategory('');
-        }
-      })
+    handleCloseModal();
+    _clearModalInputs();
+  }
+
+  function _clearModalInputs() {
+    setTitle('');
+    setAmount(0);
+    setTransactionType('deposit');
+    setCategory('');
   }
 
   return (
