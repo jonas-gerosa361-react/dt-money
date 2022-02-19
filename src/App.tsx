@@ -4,6 +4,7 @@ import { GlobalStyle } from "./styles/Global";
 import Modal from 'react-modal';
 import { useState } from "react";
 import { NewTransactionModal } from "./components/NewTransactionModal";
+import { TransactionsProvider } from "./TransactionsContext";
 
 Modal.setAppElement('#root');
 
@@ -19,7 +20,7 @@ export function App() {
   }
 
   return (
-    <>
+    <TransactionsProvider>
       <GlobalStyle />
       <Header onOpenModal={handleOpenModal}/>
 
@@ -30,6 +31,6 @@ export function App() {
       />
 
       <Dashboard />
-    </>
+    </TransactionsProvider>
   );
 }
